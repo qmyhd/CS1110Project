@@ -26,6 +26,10 @@ game_on = False
 
 
 def setup():
+    """
+    This function sets-up the game: By uploading the background image and scaling it, setting up the camera's parameters, creating references for each
+    characters movements using the spritesheets provided, initializing the score of apples collected, setting up the random location of the apples that will pop-up using a list of locations,
+    """
     global camera, frame, snow_white_on,snow_white_move, snow_white_on, snow_white, frame, \
         snow_white_up, snow_white_down, snow_white_right, snow_white_left, score_apples_SW, score_box_SW, grass_background,\
         apples, SW_life, SW_health_bar, prince_charming_on, prince_charming_down, prince_charming_up,\
@@ -96,6 +100,10 @@ def setup():
     PC_health_bar = uvage.from_color(300, 500, "red", PC_life, 35)
 
 def start_screen():
+    """
+    This function sets-up the first thing that pops up on screen. An intro page to introduce the players to the goal of the game.
+    By drawing text in UVAGE and then requiring the spacebar as user input from the user in order to start the game.
+    """
     global game_on
     if game_on == False:
         camera.clear('light green')
@@ -114,11 +122,18 @@ def start_screen():
 
 
 def draw_environment():
+    """
+    This function will set up the global variable and display the background image the players will be playing on.
+    """
     global grass_background
     camera.draw(grass_background)
 
 
 def handle_SW_apples():
+     """
+    This functions uses a for loop and if statements to keep track of snow white's apples collected. By updating the score whenever snow
+    white touches an apple, and by randomizing the location of the next apple that will appear once any other apple that is currently on the screen is touched.
+    """
     global camera, apples, score_apples_SW, score_box_SW
     # new location for apple if touched
     for apple in apples:
@@ -134,6 +149,10 @@ def handle_SW_apples():
     camera.draw(score_box_SW)
 
 def handle_PC_apples():
+    """
+    This functions uses a for loop and if statements to keep track of Prince Charming's apples collected. By updating the score whenever Prince Charming
+    touches an apple, and by randomizing the location of the next apple that will appear once any other apple that is currently on the screen is touched.
+    """
     global camera, apples, score_apples_PC, score_box_PC
     # new location for apple if touched
     for apple in apples:
@@ -149,7 +168,14 @@ def handle_PC_apples():
     camera.draw(score_box_PC)
 
 
+    
 def move_snow_white():
+    """
+    This function will set up the movement controls for snow white's movements.
+    By setting the speed to 7 and setting up if statements that are based on the users inputs using the Up, down, left, and right keys.
+    The if statement will examine the user input and adjsut the frame variable accordingly. It will then use the frame variable as an integer to determine what
+    appropriate image will be used from the sprite sheet.
+    """
     global snow_white_move, snow_white_on, snow_white, frame, snow_white_up,\
         snow_white_down, snow_white_right, snow_white_left
     snow_white_move = False
@@ -189,6 +215,12 @@ def move_snow_white():
 
 
 def move_prince_charming():
+    """
+    This function will set up the movement controls for prince charming's movements.
+    By setting the speed to 7 and setting up if statements that are based on the users inputs using the Up, down, left, and right keys.
+    The if statement will examine the user input and adjsut the frame variable accordingly. It will then use the frame variable as an integer to determine what
+    appropriate image will be used from the sprite sheet.
+    """
     global prince_charming_move, prince_charming_on, prince_charming, frame_p, prince_charming_up,\
         prince_charming_down, prince_charming_right, prince_charming_left
     prince_charming_move = False

@@ -56,15 +56,15 @@ def setup():
     prince_charming_up = uvage.load_sprite_sheet("prince_charming_sprite_sheet_up.png", rows=1, columns=4)
     prince_charming_left = uvage.load_sprite_sheet("prince_charming_sprite_sheet_left.png", rows=1, columns=4)
     prince_charming_right = uvage.load_sprite_sheet("prince_charming_sprite_sheet_right.png", rows=1, columns=4)
-    prince_charming = uvage.from_image(100, 200, prince_charming_down[0])
+    prince_charming = uvage.from_image(200, 200, prince_charming_down[0])
     prince_charming.scale_by(2)
     # all above prince charming images are from https://www.deviantart.com/slimmmeiske2/art/RMXP-Sprite-Disney-s-Prince-Charming-352610928
     prince_charming_move = False
 
     score_apples_SW = 0
     score_apples_PC = 0
-    score_box_SW = uvage.from_text(150, 30, "Snow's Apples: " + str(score_apples_SW), 40, 'red')
-    score_box_PC = uvage.from_text(400, 400, "Prince's Apples: " + str(score_apples_PC), 40, 'red')
+    score_box_SW = uvage.from_text(650, 550, "Snow's Apples: " + str(score_apples_SW), 40, 'white', bold=True)
+    score_box_PC = uvage.from_text(150, 30, "Prince's Apples: " + str(score_apples_PC), 40, 'red')
 
     # random locations from x=55 to 85% of the screen width
     rand_location_x1 = random.randint(55, 750)
@@ -100,8 +100,8 @@ def draw_environment():
     camera.draw(grass_background)
 
 
-def handle_apples():
-    global camera, apples, score_apples_SW, score_apples_PC, score_box_SW, score_box_PC
+def handle_SW_apples():
+    global camera, apples, score_apples_SW, score_box_SW
     # new location for apple if touched
     for apple in apples:
         if snow_white.touches(apple):
@@ -110,6 +110,15 @@ def handle_apples():
             new_random_y = random.randint(48, 550)
             apple.x = new_random_x
             apple.y = new_random_y
+    camera.draw(apple)
+    # updates score on screen for collected apple
+    score_box_SW = uvage.from_text(650, 550, "Snow's Apples: " + str(score_apples_SW), 40, 'white', bold=True)
+    camera.draw(score_box_SW)
+
+def handle_PC_apples():
+    global camera, apples, score_apples_PC, score_box_PC
+    # new location for apple if touched
+    for apple in apples:
         if prince_charming.touches(apple):
             score_apples_PC += 1
             new_random_x = random.randint(55, 750)
@@ -118,9 +127,8 @@ def handle_apples():
             apple.y = new_random_y
     camera.draw(apple)
     # updates score on screen for collected apple
-    score_box_SW = uvage.from_text(150, 30, "Snow's Apples: " + str(score_apples_SW), 40, 'red')
-    score_box_PC = uvage.from_text(400, 400, "Prince's Apples: " + str(score_apples_PC), 40, 'red')
-    camera.draw(score_box_SW, score_box_PC)
+    score_box_PC = uvage.from_text(150, 30, "Prince's Apples: " + str(score_apples_PC), 40, 'red')
+    camera.draw(score_box_PC)
 
 def handle_poison_apples():
     global camera, poison_apples, snow_white, life, health_bar
@@ -140,7 +148,7 @@ def move_snow_white():
         snow_white_down, snow_white_right, snow_white_left
     snow_white_move = False
     if snow_white_on:
-        speed = 5
+        speed = 7
         if uvage.is_pressing("up arrow"):
             snow_white.y -= speed
             snow_white_move = True
@@ -179,7 +187,7 @@ def move_prince_charming():
         prince_charming_down, prince_charming_right, prince_charming_left
     prince_charming_move = False
     if prince_charming_on:
-        speed = 5
+        speed = 7
         if uvage.is_pressing("w"):
             prince_charming.y -= speed
             prince_charming_move = True
@@ -214,7 +222,8 @@ def move_prince_charming():
 
 def tick():
     draw_environment()
-    handle_apples()
+    handle_PC_apples()
+    handle_SW_apples()
     handle_poison_apples()
     move_prince_charming()
     move_snow_white()

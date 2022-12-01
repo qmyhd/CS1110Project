@@ -17,26 +17,27 @@
 # 3) Two Players Simultaneously: Two people will control two different characters (snow white and prince charming) simultaneously and using different sets of keys.
 # 4) Collectibles: Apples will be collected, with a counter of num. collected for each player.
 
+
 import uvage, random
 
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 800
+game_on = False
+
 
 def setup():
-    """
-    This function sets-up the game: By uploading the background image and scaling it, setting up the camera's parameters, creating references for each
-    characters movements using the spritesheets provided, initializing the score of apples collected, setting up the random location of the apples that will pop-up using a list of locations,
-    """
     global camera, frame, snow_white_on,snow_white_move, snow_white_on, snow_white, frame, \
         snow_white_up, snow_white_down, snow_white_right, snow_white_left, score_apples_SW, score_box_SW, grass_background,\
-        apples, poison_apples, life, health_bar, prince_charming_on, prince_charming_down, prince_charming_up,\
+        apples, SW_life, SW_health_bar, prince_charming_on, prince_charming_down, prince_charming_up,\
         prince_charming_left, prince_charming_right, prince_charming_move, frame_p, prince_charming, score_box_PC,\
-        score_apples_PC
+        score_apples_PC, PC_life, PC_health_bar, timer, game_on
     camera = uvage.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
     frame = 0  # will control how quickly sprite (Snow White) goes through sprite sheet, displays her still image
     frame_p = 0 # will control how quickly sprite (Prince C.) goes through sprite sheet, displays his still image
     snow_white_on = True  # Snow White is alive
     prince_charming_on = True # Prince Charming is alive
+    game_on = False
+    timer = 70
     grass_background = uvage.from_image(0, 600, "grass_background.png")
     grass_background.scale_by(2.2)
     # background: https://www.deviantart.com/axze/art/Blade-of-Magic-Tiles-2-481826099
@@ -73,13 +74,13 @@ def setup():
     rand_location_y2 = random.randint(48, 550)
     rand_location_y3 = random.randint(48, 550)
     apples = [
-        uvage.from_image(rand_location_x1, rand_location_y1, "good_apple.png"),
-        uvage.from_image(rand_location_x2, rand_location_y2, "good_apple.png"),
-        uvage.from_image(rand_location_x3, rand_location_y3, "good_apple.png")
+        uvage.from_image(rand_location_x1, rand_location_y1, "apple_good.png"),
+        uvage.from_image(rand_location_x2, rand_location_y2, "apple_good.png"),
+        uvage.from_image(rand_location_x3, rand_location_y3, "apple_good.png")
     ]
     for each in apples:
-        each.scale_by(.1)
-    # apple: https://freesvg.org/red-apple-remix
+        each.scale_by(2)
+    # apple: https://www.deviantart.com/xxdowntoearthfooxx/art/Gala-Apple-834004646
     rand_location_x4 = random.randint(55, int(.85 * SCREEN_WIDTH))
     rand_location_x5 = random.randint(55, int(.85 * SCREEN_WIDTH))
     poison_apples = [
@@ -89,23 +90,35 @@ def setup():
         uvage.from_image(rand_location_x4, 10, "poison_apple.png"),
         uvage.from_image(rand_location_x5, 10, "poison_apple.png"),
     ]
-    life = 100
-    health_bar = uvage.from_color(450, 100, "red", life, 35)
+    SW_life = 100
+    PC_life = 100
+    SW_health_bar = uvage.from_color(450, 100, "red", SW_life, 35)
+    PC_health_bar = uvage.from_color(300, 500, "red", PC_life, 35)
+
+def start_screen():
+    global game_on
+    if game_on == False:
+        camera.clear('light green')
+        camera.draw(uvage.from_text(400, 100, "Apple Picking <3", 70, "red"))
+        camera.draw(uvage.from_text(400, 200, "Your First Date", 60, "white"))
+        camera.draw(uvage.from_text(400, 250, "Snow White and Prince Charming are on their first date,", 25, "white"))
+        camera.draw(uvage.from_text(400, 270, "and decide to have an apple picking competition", 25, "white"))
+        camera.draw(uvage.from_text(400, 300, "Snow White moves using the arrow keys, Prince Charming moves using WASD keys", 25, "white"))
+        camera.draw(uvage.from_text(400, 350, "Both players will try to collect as many apples as possible before the timer runs out", 25, "white"))
+        camera.draw(uvage.from_text(400, 400, "Whoever has the most apples at the end wins their date!!", 35, "white"))
+        camera.draw(uvage.from_text(400, 500, "Press the space bar to begin your date <3", 55, "red"))
+        if uvage.is_pressing("space"):
+            game_on = True
+
+
 
 
 def draw_environment():
-    """
-    This function will set up the global variable and display the background image the players will be playing on.
-    """
     global grass_background
     camera.draw(grass_background)
 
 
 def handle_SW_apples():
-    """
-    This functions uses a for loop and if statements to keep track of snow white's apples collected. By updating the score whenever snow
-    white touches an apple, and by randomizing the location of the next apple that will appear once any other apple that is currently on the screen is touched.
-    """
     global camera, apples, score_apples_SW, score_box_SW
     # new location for apple if touched
     for apple in apples:
@@ -115,16 +128,12 @@ def handle_SW_apples():
             new_random_y = random.randint(48, 550)
             apple.x = new_random_x
             apple.y = new_random_y
-    camera.draw(apple)
+        camera.draw(apple)
     # updates score on screen for collected apple
     score_box_SW = uvage.from_text(650, 550, "Snow's Apples: " + str(score_apples_SW), 40, 'white', bold=True)
     camera.draw(score_box_SW)
 
 def handle_PC_apples():
-    """
-    This functions uses a for loop and if statements to keep track of Prince Charming's apples collected. By updating the score whenever Prince Charming
-    touches an apple, and by randomizing the location of the next apple that will appear once any other apple that is currently on the screen is touched.
-    """
     global camera, apples, score_apples_PC, score_box_PC
     # new location for apple if touched
     for apple in apples:
@@ -134,31 +143,13 @@ def handle_PC_apples():
             new_random_y = random.randint(48, 550)
             apple.x = new_random_x
             apple.y = new_random_y
-    camera.draw(apple)
+        camera.draw(apple)
     # updates score on screen for collected apple
     score_box_PC = uvage.from_text(150, 30, "Prince's Apples: " + str(score_apples_PC), 40, 'red')
     camera.draw(score_box_PC)
 
-def handle_poison_apples():
-    global camera, poison_apples, snow_white, life, health_bar
-    for p_apple in poison_apples:
-        speed = random.randint(3, 8)
-        p_apple.speedy = speed
-    for p_apple in poison_apples:
-        if p_apple.touches(snow_white):
-            life -= 20
-        # updates health bar if hit by poison apple
-        health_bar = uvage.from_color(450, 100, "red", life, 35)
-        camera.draw(health_bar)
-
 
 def move_snow_white():
-    """
-    This function will set up the movement controls for snow white's movements.
-    By setting the speed to 7 and setting up if statements that are based on the users inputs using the Up, down, left, and right keys.
-    The if statement will examine the user input and adjsut the frame variable accordingly. It will then use the frame variable as an integer to determine what 
-    appropriate image will be used from the sprite sheet.
-    """
     global snow_white_move, snow_white_on, snow_white, frame, snow_white_up,\
         snow_white_down, snow_white_right, snow_white_left
     snow_white_move = False
@@ -198,12 +189,6 @@ def move_snow_white():
 
 
 def move_prince_charming():
-    """
-    This function will set up the movement controls for prince charming's movements.
-    By setting the speed to 7 and setting up if statements that are based on the users inputs using the Up, down, left, and right keys.
-    The if statement will examine the user input and adjsut the frame variable accordingly. It will then use the frame variable as an integer to determine what 
-    appropriate image will be used from the sprite sheet.
-    """
     global prince_charming_move, prince_charming_on, prince_charming, frame_p, prince_charming_up,\
         prince_charming_down, prince_charming_right, prince_charming_left
     prince_charming_move = False
@@ -242,12 +227,15 @@ def move_prince_charming():
         camera.draw(prince_charming)
 
 def tick():
-    draw_environment()
-    handle_PC_apples()
-    handle_SW_apples()
-    handle_poison_apples()
-    move_prince_charming()
-    move_snow_white()
+    global timer, game_on
+    if game_on == False:
+        start_screen()
+    if game_on == True:
+        draw_environment()
+        handle_PC_apples()
+        handle_SW_apples()
+        move_prince_charming()
+        move_snow_white()
     camera.display()
 
 setup()

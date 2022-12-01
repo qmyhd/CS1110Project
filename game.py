@@ -1,27 +1,21 @@
 # Names: Qais Youssef & Millie Pandya
 # Computing Id's: QMY6CV & vup7bv
-# Description of the game: This game will use a character (Snow White) as the main
-# object that players will control. Using up, down, left, and right keys, players will control Snow White's
-# movement to collect apples that appear randomly on screen. Players have 5 minutes to collect 5 apples to win.
-# Each apple collected gives the player one point, and it takes 5 points to win the game. Unfortunately
-# there are also poison apples falling from the top, and Snow White must avoid them while collecting apples.
-# Any time Snow White accidentally touches a poison apple, her health bar decreases in size. Once the health bar is
-# exhausted, the player loses the game.
+# Description of the game: This is a two player that game will use two characters (Snow White, Prince Charming) as the main user controlled objects.
+# One player will control snow white. Using up, down, left, and right keys, players will control Snow White's
+# movement to collect apples that appear randomly on screen. The seconnd player will control Prince Charming using
+# the W,A,S,D key. Each apple collected gives the player one point, and there will be a timer that the players will refrence. 
+# Players will compete against each other to collect the most apples before the timer gets to 0.
 
 # Three Basic Features:
-# 1) User Input: Players will be able to use the arrow keys to move Snow White.
-# 2) Game Over: If Snow White collects too many poison apples, her health bar will be exhausted and the game will end.
-# 3) Graphics/Images: We will be using a field/grass background, with "good" red apples, and poison apples.
-#   There will also be a witch that pops out for the game over screen.
+# 1) User Input: Players will be able to use the arrow keys to move Snow White and Prince Charming.
+# 2) Game Over: Once the timer reaches 0, the game will be over. Including a text pop-up that says "Game Over" and players will  be unable to move.
+# 3) Graphics/Images: We will be using a field/grass background, with red apples. We will also be using two sprite sheets for prince charming and snow white.
 
 # 4 Additional Features:
-# 1) Timer: Player has to collect 5 apples within 5 minutes without depleting their health bar to win the game.
-# 2) Sprite Animation: Sprite sheet animation of Snow White will be used to animate her walking motions.
-# 3) Enemies: The poison apples will fall from the top of the screen, and Snow White will have to avoid them to avoid
-#   decreasing her health bar. Once the health bar is exhausted, the player loses the game.
-# 4) Collectibles: Apples will be collected, with a counter of num. collected, and a goal of 5 to reach to win the game.
-# 5) Health Bar: There will be a health bar that decreases each time Snow White hits a poison apple.
-#   Once the health bar is exhausted, the player loses the game.
+# 1) Timer: Player has to collect more apples than the other player before the timer reaches 0. The timer is activated by pressing _____.
+# 2) Sprite Animation: Sprite sheet animation of Snow White and prince charming will be used to animate her walking motions.
+# 3) Two Players Simultaneously: Two people will control two different characters (snow white and prince charming) simultaneously and using different sets of keys.
+# 4) Collectibles: Apples will be collected, with a counter of num. collected for each player.
 
 import uvage, random
 
@@ -29,6 +23,10 @@ SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 800
 
 def setup():
+    """
+    This function sets-up the game: By uploading the background image and scaling it, setting up the camera's parameters, creating references for each
+    characters movements using the spritesheets provided, initializing the score of apples collected, setting up the random location of the apples that will pop-up using a list of locations,
+    """
     global camera, frame, snow_white_on,snow_white_move, snow_white_on, snow_white, frame, \
         snow_white_up, snow_white_down, snow_white_right, snow_white_left, score_apples_SW, score_box_SW, grass_background,\
         apples, poison_apples, life, health_bar, prince_charming_on, prince_charming_down, prince_charming_up,\
@@ -96,11 +94,18 @@ def setup():
 
 
 def draw_environment():
+    """
+    This function will set up the global variable and display the background image the players will be playing on.
+    """
     global grass_background
     camera.draw(grass_background)
 
 
 def handle_SW_apples():
+    """
+    This functions uses a for loop and if statements to keep track of snow white's apples collected. By updating the score whenever snow
+    white touches an apple, and by randomizing the location of the next apple that will appear once any other apple that is currently on the screen is touched.
+    """
     global camera, apples, score_apples_SW, score_box_SW
     # new location for apple if touched
     for apple in apples:
@@ -116,6 +121,10 @@ def handle_SW_apples():
     camera.draw(score_box_SW)
 
 def handle_PC_apples():
+    """
+    This functions uses a for loop and if statements to keep track of Prince Charming's apples collected. By updating the score whenever Prince Charming
+    touches an apple, and by randomizing the location of the next apple that will appear once any other apple that is currently on the screen is touched.
+    """
     global camera, apples, score_apples_PC, score_box_PC
     # new location for apple if touched
     for apple in apples:
@@ -144,6 +153,12 @@ def handle_poison_apples():
 
 
 def move_snow_white():
+    """
+    This function will set up the movement controls for snow white's movements.
+    By setting the speed to 7 and setting up if statements that are based on the users inputs using the Up, down, left, and right keys.
+    The if statement will examine the user input and adjsut the frame variable accordingly. It will then use the frame variable as an integer to determine what 
+    appropriate image will be used from the sprite sheet.
+    """
     global snow_white_move, snow_white_on, snow_white, frame, snow_white_up,\
         snow_white_down, snow_white_right, snow_white_left
     snow_white_move = False
@@ -183,6 +198,12 @@ def move_snow_white():
 
 
 def move_prince_charming():
+    """
+    This function will set up the movement controls for prince charming's movements.
+    By setting the speed to 7 and setting up if statements that are based on the users inputs using the Up, down, left, and right keys.
+    The if statement will examine the user input and adjsut the frame variable accordingly. It will then use the frame variable as an integer to determine what 
+    appropriate image will be used from the sprite sheet.
+    """
     global prince_charming_move, prince_charming_on, prince_charming, frame_p, prince_charming_up,\
         prince_charming_down, prince_charming_right, prince_charming_left
     prince_charming_move = False
